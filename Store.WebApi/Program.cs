@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Store.Infra.Data.Context;
 using Store.Infra.Ioc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +50,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<StoreContext>();
+    if(context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
 }
 
 app.UseAuthentication();

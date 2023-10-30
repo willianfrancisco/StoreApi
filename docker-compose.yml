@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  store-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=!@12QWqw
+      - MSSQL_PID=Express
+    ports:
+      - 1433:1433
+    restart: always
+    volumes:
+      - mssql-server:/etc/data
+
+  store-api:
+    build: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - database=Store
+    ports:
+      - 7281:80
+    restart: always
+    depends_on:
+      - store-db
+
+volumes:
+  mssql-server:
